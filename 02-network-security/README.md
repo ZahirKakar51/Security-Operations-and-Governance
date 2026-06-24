@@ -1,4 +1,8 @@
 # Network Security Incident Response & Traffic Analysis
+## Project Artifacts
+* 📄 [View/Download Official Graded Incident Report (PDF)](NIST%20Incident%20report%20analysis.pdf)
+
+---
 
 ## Executive Summary
 This project documents a comprehensive incident response execution aligned with the **NIST Cybersecurity Framework (CSF)**. Acting as a Cybersecurity Analyst, I investigated and successfully mitigated a network disruption caused by a Distributed Denial of Service (DDoS) / SYN Flood attack targeting an organization's critical internal web services. 
