@@ -1,5 +1,8 @@
 # Internal Security Audit & Risk Assessment (Botium Toys)
+## Project Artifacts
+* 📄 [View/Download Official Security Audit Checklist (PDF)](botium-toys-controls-checklist.pdf)
 
+---
 ## 1. The Scenario
 Botium Toys is a rapidly growing fictional e-commerce toy organization. Currently, the company does not have a centralized security strategy, formal risk management framework, or strictly enforced compliance controls. This audit was conducted to identify existing vulnerabilities, assess current security postures against industry standards, and safeguard internal assets, customer data, and brand reputation.
 
