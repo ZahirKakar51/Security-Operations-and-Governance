@@ -1,45 +1,35 @@
 # Network Security Incident Response & Traffic Analysis
 
 ## Project Artifacts
-* 📄 [View/Download NIST DoS Incident Response Playbook (PDF)](NIST%20Incident%20report%20analysis.pdf)
-* 🔍 [View/Download DNS & ICMP Traffic Analyzer Report (PDF)](Cybersecurity%20incident%20report%20network%20traffic%20analysis.pdf)
+* 📄 [View/Download NIST Incident Report Analysis (PDF)](NIST%20Incident%20report%20analysis.pdf)
+* 🔍 [View/Download Cybersecurity Incident Report: Network Traffic Analysis (PDF)](Cybersecurity%20incident%20report%20network%20traffic%20analysis.pdf)
 
 ---
 
-## Executive Summary
-This project documents a comprehensive incident response execution and technical log analysis aligned with the **NIST Cybersecurity Framework (CSF)**. Acting as a Cybersecurity Analyst, I investigated and successfully resolved two distinct enterprise network disruptions:
-1. A Distributed Denial of Service (DDoS) / SYN Flood attack targeting critical web availability.
-2. A localized Domain Name System (DNS) resolution failure diagnosed through raw network packet analysis.
+## 1. NIST Incident Report Analysis (ICMP Flood DoS Attack)
+
+### Summary
+A company experienced a DoS attack through an unconfigured firewall which allowed the attacker to send a flood of ICMP packets which overwhelm the company’s networks. The team responded by blocking ICMP packets, stopping all non-critical network services offline, and restoring critical network services.
+
+### NIST Framework Alignment
+* **Identify:** A DoS attack through an unconfigured firewall which overwhelmed the company internal networks with ICMP packets.
+* **Protect:** The cybersecurity team implemented a new firewall rule to limit the rate of ICMP packets, source IP address verification for spoofed IP addresses, and IDS/IPS to monitor, filter and block traffic based on suspicious characteristics.
+* **Detect:** The cybersecurity team configured Source IP address verification on the firewall to check for spoofed IP addresses on incoming ICMP packets.
+* **Respond:** The incident management team responded to the attack by blocking ICMP packets, isolating affected systems and restoring essential network services. After containment, the team performed a root cause analysis and updated the incident response plan to protect the company from such incidents in the future.
+* **Recover:** The network was fully restored after two hours of downtime. A post-incident review was conducted to strengthen policies, implement regular firewall audits, and test the resilience of backup systems. The organization also documented lessons learned and trained staff on future DDoS response procedures.
 
 ---
 
-## Technical Environment & Tools
-* **Framework Alignment:** NIST Cybersecurity Framework (CSF) V1.1/2.0
-* **Protocols Analyzed:** TCP/IP, UDP, DNS (Port 53), HTTP/HTTPS, ICMP
-* **Defense Strategies:** Network Segmentation, Firewall Rule Optimization, Port Hardening, Ingress Filtering
-* **Log Analysis Utilities:** `tcpdump`, Wireshark Packet Inspection
+## 2. Network Traffic Analysis (DNS Resolution Failure)
 
----
+### Scenario & Symptoms
+Several customers reported that they were not able to access the website `www.yummyrecipesforme.com` and saw the error message "destination port unreachable" after waiting for the page to load at timestamp `13:24.192571`.
 
-## NIST CSF Alignment & Incident Walkthrough
+### Technical Investigation & Findings
+The IT department loaded the `tcpdump` network analyzer tool to investigate the incident and found the following:
+* **Outbound Traffic:** The client browser (`192.51.100.15`) sent a UDP DNS query to the DNS server (`203.0.113.2`) on port 53 requesting an A record to change the domain name into an IP address.
+* **Inbound Response:** The analyzer showed that instead of a standard reply, the client received ICMP packets containing the error message: `udp port 53 unreachable`.
+* **Consistency:** This error occurred consistently across three separate ICMP responses, confirming the issue was not transient. The browser was unable to resolve the domain name to an IP address, which prevented the HTTPS request from being sent to the web server.
 
-### 🔍 1. Identify
-* [cite_start]**Targeted Assets:** Internal corporate web servers and critical customer-facing DNS infrastructure (`www.yummyrecipesforme.com`)[cite: 4, 5].
-* [cite_start]**Impact Assessment:** The network experienced an unprecedented spike in raw unauthorized traffic, leading to service degradation, "destination port unreachable" errors, and a total lack of availability for authorized users[cite: 6, 13].
-
-### 🛡️ 2. Protect
-* **Firewall Hardening:** Deployed updated access control lists (ACLs) on perimeter firewalls to block verified malicious external source IP addresses and enforce strict ICMP rate limiting.
-* **Zone Segmentation:** Isolated compromised public-facing server environments into a secure, segmented subnet to prevent internal lateral movement.
-* [cite_start]**Attack Surface Reduction:** Audited system ports, disabled unused services, verified active listening daemons on critical infrastructure ports (like Port 53), and enforced secure administrative connection protocols[cite: 7, 18, 22].
-
-### 👁️ 3. Detect
-* **Anomalous Traffic Indicators:** Network monitoring baselines triggered high-severity alerts due to an overwhelming influx of incomplete TCP connection requests and abnormal ICMP packet behaviors.
-* [cite_start]**Log Inspection:** Analyzed raw packet capture outputs utilizing `tcpdump` to trace explicit communications between client machine `192.51.100.15` and the target name server `203.0.113.2`, pinpointing structural patterns in the packet flood[cite: 5, 14, 16].
-
-### ⚡ 4. Respond
-* **Containment Protocols:** Initiated perimeter rate-limiting, dropped unauthenticated traffic flows, and executed drop-action rules to isolate network segments from active malicious traffic.
-* [cite_start]**Mitigation:** Successfully minimized packet load on target resources, allowing internal infrastructure to recover system memory, restore DNS port accessibility, and free up vital processing bandwidth[cite: 18, 22].
-
-### 🔄 5. Recover
-* [cite_start]**Service Restoration:** Safely restored standard public-facing network paths after verification of clean traffic lines, verifying that the DNS service daemon was stable and accepting connection requests[cite: 18, 22].
-* **Integrity Validation:** Monitored system availability logs and performed automated health checks to guarantee that normal business operations safely and completely resumed without lingering latency.onitored system availability logs and performed automated health checks to guarantee that normal business operations safely resumed.
+### Suspected Root Cause
+The DNS server responded with `udp port 53 unreachable`, which indicates that no DNS service was listening on port 53 of the server, causing the query to fail. A likely cause is that the DNS service on the server was stopped, crashed, or was intentionally disabled, or a firewall/security group is blocking UDP traffic on port 53.
