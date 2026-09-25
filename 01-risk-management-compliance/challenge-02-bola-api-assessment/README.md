@@ -1,4 +1,3 @@
-```markdown
 # Challenge 02 — BOLA API Vulnerability Assessment & Board Risk Report
 
 **Program:** CYBR Z Survivor International Cohort | CyberDistro  
@@ -10,10 +9,7 @@
 
 ## Scenario
 
-Apex Retail UK's e-commerce platform passed authentication but failed
-authorization. Task: confirm whether a logged-in user could access another
-user's basket — then present findings to the board with financial exposure,
-regulatory framing, and a remediation business case.
+Apex Retail UK's e-commerce platform passed authentication but failed authorization. Task: confirm whether a logged-in user could access another user's basket — then present findings to the board with financial exposure, regulatory framing, and a remediation business case.
 
 ---
 
@@ -36,9 +32,7 @@ regulatory framing, and a remediation business case.
 | E02 Baseline | user_a@apex.local | Requests own basket (ID 9) | Granted — expected |
 | E03 Attack | user_b@apex.local | Requests user_a's basket (ID 9) | Full access — UserId: 31, all items exposed |
 
-**Root cause confirmed:** Any authenticated user can request any basket ID
-and receive full data. Front-end hiding is not a fix — the endpoint remains
-unprotected regardless of what the UI shows.
+**Root cause confirmed:** Any authenticated user can request any basket ID and receive full data. Front-end hiding is not a fix — the endpoint remains unprotected regardless of what the UI shows.
 
 ---
 
@@ -51,8 +45,7 @@ unprotected regardless of what the UI shows.
 | Data exposed | Name, email, postal address, order history, invoice metadata, customer identifiers |
 | Data NOT stored | Card numbers · plaintext passwords · national identity numbers |
 
-**Unknown:** Whether historical unauthorized access occurred outside this
-test, full scope of affected endpoints, and whether data left the organisation.
+**Unknown:** Whether historical unauthorized access occurred outside this test, full scope of affected endpoints, and whether data left the organisation.
 
 ---
 
@@ -82,27 +75,20 @@ test, full scope of affected endpoints, and whether data left the organisation.
 | ICO 72-hour notification clock | Does not start on vulnerability alone |
 | Maximum penalty ceiling | £17.5m or 4% of £52m turnover (£2.08m) |
 
-> A confirmed vulnerability and a confirmed personal-data breach are distinct
-> legal determinations. They cannot be conflated without evidence.
+> A confirmed vulnerability and a confirmed personal-data breach are distinct legal determinations. They cannot be conflated without evidence.
 
 ---
 
 ## Remediation
 
 **Primary Control — Server-Side Ownership Check**
-
-```
 IF authenticated_user_id != basket.user_id → return HTTP 403 Forbidden
-```
 
 Must be implemented server-side. Cannot be delegated to the client.
 
-**Validation Test (mandatory in every deployment pipeline)**
-
-```
-user_a@apex.local → GET /rest/basket/9 → ALLOW  (owns resource)
-user_b@apex.local → GET /rest/basket/9 → DENY   (HTTP 403)
-```
+**Validation Test — Mandatory in Every Deployment Pipeline**
+user_a@apex.local → GET /rest/basket/9 → ALLOW (owns resource)
+user_b@apex.local → GET /rest/basket/9 → DENY (HTTP 403)
 
 **Defence-in-Depth**
 
@@ -135,10 +121,8 @@ user_b@apex.local → GET /rest/basket/9 → DENY   (HTTP 403)
 
 | File | Description |
 |------|-------------|
-| [CYBRZ_C02_Kakar_Zahir_BoardDeck.pdf](./CYBRZ_C02_Kakar_Zahir_BoardDeck.pdf) | Original board deck submitted to CYBR Z Survivor panel | 
+| [CYBRZ C02 Board Deck](./CYBRZ_C02_Kakar_Zahir_BoardDeck.pdf) | Original board deck submitted to CYBR Z Survivor panel |
 
 ---
 
-> **CYBR Z Survivor Cohort** — 1 of ~35 selected globally from 600+
-> applicants | Powered by CyberDistro
-```
+> **CYBR Z Survivor Cohort** — 1 of ~35 selected globally from 600+ applicants | Powered by CyberDistro
